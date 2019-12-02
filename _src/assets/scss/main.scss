@@ -1,8 +1,30 @@
-@import 'core/settings';
-@import 'core/links';
+@import "core/settings";
+@import "core/links";
 
+/* RESET */
+
+html,
 body {
-	background: url('../images/logo-adalab-80px.png') center center no-repeat $color-white;
-	margin: 0;
-	height: 100vh;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.body {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  height: 100%;
+}
+
+ul {
+  list-style: none;
+}
+
+.shows-result--col-1 {
+  background-color: #fabada;
+}
+
+.shows-result--col-2 {
+  background-color: grey;
 }
