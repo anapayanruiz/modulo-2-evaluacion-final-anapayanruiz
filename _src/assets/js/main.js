@@ -24,7 +24,6 @@ let showsFavorites = [];
 function paintShows() {
   const searchResult = document.querySelector('.show-result__list');
   let htmlCode = '';
-  console.log(shows);
 
   //tengo que recorrer el array shows
   for (const showsItem of shows) {
@@ -43,7 +42,7 @@ function paintShows() {
       showImage = "https://via.placeholder.com/210x295.png";
     }
 
-    htmlCode += `<li>`;
+    htmlCode += `<li class="show-result__showItem">`;
     htmlCode += `<button class="show-result__button" data-index="${showIndex}" data-id="${showId}">
                     <img class="show-result__image" src="${showImage}"/>
                     <h3 class="show-result__title">${showName}</h3>
@@ -60,78 +59,90 @@ function paintShows() {
   //pintamos y escuchamos 
   const listElements = document.querySelectorAll('.show-result__button');
   for (const listElement of listElements) {
-    listElement.addEventListener('click', handleFavoriteShows);
+    listElement.addEventListener('click', selectFavoriteShows);
   }
 
 }
 
 
-//handle de series favoritas
-function handleFavoriteShows(event) {
-  showsFavorites.push(event.currentTarget.dataset.id);
-  paintFavoriteShows();
+//handle: selecciono dentro de las series la favorita
+function selectFavoriteShows(event) {
 
-
-  const clickedId = event.currentTarget.dataset.id
-  const favoriteIndex = showsFavorites.indexOf(clickedId);
-  console.log('selecciono fav id;', clickedId, 'selecciono fav index:', favoriteIndex);
+  const index = event.currentTarget.dataset.index;
+  //meto aqui el index que seleciono y se lo meto al array shows
+  //y lo guardo en una constante que es un objeto, y este es el que 
+  //voy a pushear
+  const showSelected = shows[index];
+  const favoriteIndex = showsFavorites.indexOf(showSelected);
   const isFavorite = favoriteIndex !== -1;
 
-  console.log('Favs:', showsFavorites, 'clicked', clickedId, '¿ES favorito?', isFavorite);
+
+  console.log('Selecciono el array', showSelected);
+  console.log('Me añade en el array:', showsFavorites);
+  console.log(isFavorite);
 
 
-
-
+  if (isFavorite === true) {
+    console.log('Lo saco');
+  } else {
+    showsFavorites.push(showSelected);
+  }
+  paintFavoriteShows();
 }
-
-
 
 
 
 //funcion para pintar series favoritas
 function paintFavoriteShows() {
 
-  const searchResult = document.querySelector('.show-result__list');
+  const searchResultFavorites = document.querySelector('.show-result__list--favorites');
   let htmlCode = '';
-  console.log(shows);
 
   //tengo que recorrer el array shows
-  for (const showsItem of shows) {
-    const showName = showsItem.show.name;
+  for (const showsFavorite of showsFavorites) {
+    const showFavName = showsFavorite.show.name;
     //aqui guardo la posicion que tiene la serie
-    const showIndex = shows.indexOf(showsItem);
+    const showFavIndex = showsFavorites.indexOf(showsFavorite);
     //aqui guardo el id que tiene la serie
-    const showId = showsItem.show.id;
-    let showImage = '';
+    const showFavId = showsFavorite.show.id;
+    let showFavImage = '';
 
     //si no tengo imagen tengo que darle una condicion para que aparezca una imagen por defecto
-    if (showsItem.show.image !== null) {
-      showImage = showsItem.show.image.medium;
+    if (showsFavorite.show.image !== null) {
+
+      showFavImage = showsFavorite.show.image.medium;
 
     } else {
-      showImage = "https://via.placeholder.com/210x295.png";
+      showFavImage = "https://via.placeholder.com/210x295.png";
     }
 
     htmlCode += `<li>`;
-    htmlCode += `<button class="show-result__button" data-index="${showIndex}" data-id="${showId}">
-                      <img class="show-result__image" src="${showImage}"/>
-                      <h3 class="show-result__title">${showName}</h3>
+    htmlCode += `<button class="show-result__button" data-index="${showFavIndex}" data-id="${showFavId}">
+                      <img class="show-result__image" src="${showFavImage}"/>
+                      <h3 class="show-result__title">${showFavName}</h3>
                   </button>`;
     htmlCode += `</li>`;
 
   }
 
-  searchResult.innerHTML = htmlCode;
-
-
-
-
+  searchResultFavorites.innerHTML = htmlCode;
 
 }
 
 
 
 
+
+
+
+
+
+//aqui guardamos en el localStorage
+
+function setLocalStorage() {
+  console.log('setLocalStorage:', shows);
+  localStorage.setItem('shows', JSON.stringify(shows));
+}
 
 
 
@@ -151,8 +162,8 @@ function getServerData(event) {
     .then(function (serverData) {
       //adapto los datos del servidor para usarlos
       shows = serverData;
+      setLocalStorage();
       paintShows();
-      paintFavoriteShows();
     })
     .catch(function (err) {
       console.log('error', err);
