@@ -15,6 +15,8 @@ let shows = [];
 
 let showsFavorites = [];
 
+//-----PAINT SHOWS----//
+
 //funcion para pintar series
 function paintShows() {
   const searchResult = document.querySelector(".show-result__list");
@@ -25,7 +27,10 @@ function paintShows() {
     const showName = showsItem.show.name;
     //aqui guardo la posicion que tiene la serie
     const showIndex = shows.indexOf(showsItem);
-    //aqui guardo el id que tiene la serie
+    //aqui guardo el id que tiene la serie para más adelante saber si tengo ese
+    //id en el array
+    const showId = showsItem.show.id;
+
     let showImage = "";
 
     //si no tengo imagen tengo que darle una condicion para que aparezca una imagen por defecto
@@ -37,7 +42,7 @@ function paintShows() {
 
     htmlCode += `
     <li class="show-result__showItem">
-        <button class="show-result__button" data-index="${showIndex}">
+        <button class="show-result__button" data-index="${showIndex}" data-id="${showId}">
           <img class="show-result__image" src="${showImage}"/>
           <h3 class="show-result__title">${showName}</h3>
         </button>
@@ -45,6 +50,8 @@ function paintShows() {
   }
 
   searchResult.innerHTML = htmlCode;
+
+  //-----LISTEN SELECT FAV----//
 
   //listener para selecionar series favoritas dentro de series
   //dentro de pintar porque inmediatamente va detrás.
@@ -54,6 +61,8 @@ function paintShows() {
     listElement.addEventListener("click", selectFavoriteShows);
   }
 }
+
+//-----SELECT FAV----//
 
 //handle: selecciono dentro de las series la favorita
 function selectFavoriteShows(event) {
@@ -65,11 +74,21 @@ function selectFavoriteShows(event) {
   const favoriteIndex = showsFavorites.indexOf(showSelected);
   const isFavorite = favoriteIndex === -1;
 
+  //comprobar que el elemento no está en favoritos
+  const id = event.currentTarget.dataset.id;
+  console.log("este es el id del objeto selecionado:", id);
+  console.log(showsFavorites.includes(showSelected));
+
   if (isFavorite) {
     showsFavorites.push(showSelected);
-    paintFavoriteShows();
+  } else {
+    showsFavorites.splice(favoriteIndex, 1);
   }
+  setLocalStorage();
+  paintFavoriteShows();
 }
+
+//-----PAINT FAV----//
 
 //funcion para pintar series favoritas
 function paintFavoriteShows() {
@@ -102,7 +121,9 @@ function paintFavoriteShows() {
 
   searchResultFavorites.innerHTML = htmlCode;
 
-  //listener para selecionar series favoritas dentro de series
+  //-----LISTEN REMOVE FAV----//
+
+  //listener para borrar series favoritas dentro de series
   //dentro de pintar porque inmediatamente va detrás.
   //pintamos y escuchamos
 
@@ -112,19 +133,38 @@ function paintFavoriteShows() {
   }
 }
 
+//-----REMOVE FAV----//
+
 //funcion para borrar serie favorita
 function handleRemoveClick() {
   const index = event.currentTarget.dataset.index;
   showsFavorites.splice(index, 1);
+  setLocalStorage();
   paintFavoriteShows();
 }
+
+//-----LOCAL STORAGE----//
 
 //aqui guardamos en el localStorage
 
 function setLocalStorage() {
-  console.log("setLocalStorage:", shows);
-  localStorage.setItem("shows", JSON.stringify(shows));
+  localStorage.setItem("shows", JSON.stringify(showsFavorites));
 }
+
+//aqui cogemos los datos del localStorage
+
+function getLocalStorage() {
+  const localStorageFavShows = JSON.parse(
+    localStorage.getItem("showsFavorites")
+  );
+
+  if (localStorageFavShows !== null) {
+    showsFavorites = localStorageFavShows;
+    paintShows();
+  }
+}
+
+//-----LLAMADA AL SERVIDOR----//
 
 //aqui llamamos al servidor
 function getServerData(event) {
@@ -137,7 +177,6 @@ function getServerData(event) {
     .then(function(serverData) {
       //adapto los datos del servidor para usarlos
       shows = serverData;
-      setLocalStorage();
       paintShows();
     })
     .catch(function(err) {
