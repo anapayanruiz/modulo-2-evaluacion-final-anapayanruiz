@@ -51,15 +51,6 @@ function paintShows() {
         </button>
       </li>`;
 
-    //quiero con getFavIndex()
-    /*  
-      
-      if(parametro del get fav index  === -1){
-        const button = document.querySelector(js-search-result__button)
-        button.classList(search-result__button--favorite) 
-      }
-      
-      */
   }
 
   searchResult.innerHTML = htmlCode;
@@ -101,21 +92,10 @@ function selectFavoriteShows(event) {
 //-----GET FAV INDEX----//
 
 function getFavIndex(id) {
-  const result = showsFavorites.findIndex(function(favorite) {
-    if (favorite.show.id === id) {
-      return true;
-    } else {
-      return false;
-    }
+  return showsFavorites.findIndex(function (favorite) {
+    return favorite.show.id === id;
   });
-  return result;
 }
-
-// function getFavIndex(id) {
-//   return showsFavorites.findIndex(function(favorite) {
-//     return favorite.show.id === id;
-//   });
-// }
 
 getFavIndex();
 
@@ -172,6 +152,8 @@ function handleRemoveClick() {
   showsFavorites.splice(index, 1);
   setLocalStorage();
   paintFavoriteShows();
+  paintShows();
+
 }
 
 //-----LOCAL STORAGE----//
@@ -202,15 +184,15 @@ function getServerData(event) {
   event.preventDefault();
   const searchInput = document.querySelector(".search-form__input");
   fetch(`http://api.tvmaze.com/search/shows?q=${searchInput.value}`)
-    .then(function(response) {
+    .then(function (response) {
       return response.json();
     })
-    .then(function(serverData) {
+    .then(function (serverData) {
       //adapto los datos del servidor para usarlos
       shows = serverData;
       paintShows();
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.log("error", err);
     });
 }
