@@ -28,8 +28,6 @@ function paintShows() {
     //aqui guardo la posicion que tiene la serie
     const showIndex = shows.indexOf(showsItem);
     //aqui guardo el id que tiene la serie para más adelante saber si tengo ese
-    //id en el array
-    const showId = showsItem.show.id;
 
     let showImage = "";
 
@@ -42,11 +40,22 @@ function paintShows() {
 
     htmlCode += `
     <li class="search-result__item">
-        <button class="search-result__button" data-index="${showIndex}" data-id="${showId}">
+        <button class="search-result__button js-search-result__button" data-index="${showIndex}">
           <img class="search-result__image" src="${showImage}"/>
           <h3 class="search-result__title">${showName}</h3>
         </button>
       </li>`;
+
+    //quiero con getFavIndex()
+    /*  
+      
+      if(parametro del get fav index  === true){
+        const button = document.querySelector(js-search-result__button)
+        button.classList(search-result__button--favorite) 
+      }
+      
+      
+      */
   }
 
   searchResult.innerHTML = htmlCode;
@@ -68,27 +77,43 @@ function paintShows() {
 function selectFavoriteShows(event) {
   //meto aqui el index que seleciono y se lo meto al array shows
   //y lo guardo en una constante que es un objeto, y este es el que
-  //voy a pushear
+  //voy a pushear y lo que voy a quitar
   const index = event.currentTarget.dataset.index;
   const showSelected = shows[index];
 
-  function favoriteFilter(elemento, indice, favorites) {
-    if (elemento.show.id === showSelected.show.id) {
+  function favoriteFilter(indice, favorites) {
+    if (indice.show.id === showSelected.show.id) {
       return true;
     } else {
       return false;
     }
   }
+  /* getFavIndex(index del elemento seleccionado) */
+  const indexFavorite = showsFavorites.findIndex(favoriteFilter);
 
-  const isFavorite = showsFavorites.findIndex(favoriteFilter);
-
-  if (isFavorite === -1) {
+  if (indexFavorite === -1) {
     showsFavorites.push(showSelected);
   } else {
-    showsFavorites.splice(isFavorite, 1);
+    showsFavorites.splice(indexFavorite, 1);
   }
   setLocalStorage();
   paintFavoriteShows();
+}
+
+//-----GET FAV INDEX----//
+
+function getFavIndex(index) {
+  const result = showsFavorites.findIndex(function favoriteFilter(
+    indice,
+    favorites
+  ) {
+    if (indice.show.id === showSelected.show.id) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  return result;
 }
 
 //-----PAINT FAV----//

@@ -7,6 +7,8 @@ html,
 body {
   margin: 0;
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 ul {
@@ -40,20 +42,38 @@ html {
 
 .search-result {
   &--col-1 {
-    background-color: #fabada;
-  }
-
-  &--col-2 {
     background-color: grey;
   }
 
+  &--col-2 {
+    background-color: yellow;
+  }
+
+  &__list {
+    padding-left: 2rem;
+  }
+
   &__item {
-    position: relative;
-    display: block;
     margin: 2rem;
+    max-width: 21rem;
   }
 
   &__button {
-    border-radius: 0.7rem;
+    border-radius: 3rem;
+    max-width: 22rem;
+    overflow: hidden;
+    background-color: #ffffff;
+    border: none;
+    box-shadow: 0.2rem 0.2rem 2rem #666;
+    font-size: 1.6rem;
+    transition-duration: 0.4s;
+  }
+
+  &__button--favorite {
+    border: red 1rem solid;
+  }
+
+  &__button:hover {
+    color: red;
   }
 }
