@@ -38,9 +38,14 @@ function paintShows() {
       showImage = "https://via.placeholder.com/210x295.png";
     }
 
+    let favClassname = "";
+    if (getFavIndex(showsItem.show.id) !== -1) {
+      favClassname = "search-result__button--favorite";
+    }
+
     htmlCode += `
-    <li class="search-result__item">
-        <button class="search-result__button js-search-result__button" data-index="${showIndex}">
+    <li class="search-result__item ">
+        <button class="search-result__button ${favClassname} js-search-result__button" data-index="${showIndex}">
           <img class="search-result__image" src="${showImage}"/>
           <h3 class="search-result__title">${showName}</h3>
         </button>
@@ -49,11 +54,10 @@ function paintShows() {
     //quiero con getFavIndex()
     /*  
       
-      if(parametro del get fav index  === true){
+      if(parametro del get fav index  === -1){
         const button = document.querySelector(js-search-result__button)
         button.classList(search-result__button--favorite) 
       }
-      
       
       */
   }
@@ -80,16 +84,9 @@ function selectFavoriteShows(event) {
   //voy a pushear y lo que voy a quitar
   const index = event.currentTarget.dataset.index;
   const showSelected = shows[index];
+  const showSelectedId = showSelected.show.id;
 
-  function favoriteFilter(indice, favorites) {
-    if (indice.show.id === showSelected.show.id) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  /* getFavIndex(index del elemento seleccionado) */
-  const indexFavorite = showsFavorites.findIndex(favoriteFilter);
+  const indexFavorite = getFavIndex(showSelectedId);
 
   if (indexFavorite === -1) {
     showsFavorites.push(showSelected);
@@ -98,16 +95,14 @@ function selectFavoriteShows(event) {
   }
   setLocalStorage();
   paintFavoriteShows();
+  paintShows();
 }
 
 //-----GET FAV INDEX----//
 
-function getFavIndex(index) {
-  const result = showsFavorites.findIndex(function favoriteFilter(
-    indice,
-    favorites
-  ) {
-    if (indice.show.id === showSelected.show.id) {
+function getFavIndex(id) {
+  const result = showsFavorites.findIndex(function(favorite) {
+    if (favorite.show.id === id) {
       return true;
     } else {
       return false;
@@ -115,6 +110,14 @@ function getFavIndex(index) {
   });
   return result;
 }
+
+// function getFavIndex(id) {
+//   return showsFavorites.findIndex(function(favorite) {
+//     return favorite.show.id === id;
+//   });
+// }
+
+getFavIndex();
 
 //-----PAINT FAV----//
 
