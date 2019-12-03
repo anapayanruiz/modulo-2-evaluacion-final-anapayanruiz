@@ -51,6 +51,10 @@ html {
 
   &__list {
     padding-left: 2rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
 
   &__item {
