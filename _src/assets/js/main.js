@@ -26,8 +26,8 @@ function paintShows() {
   for (const showsItem of shows) {
     const showName = showsItem.show.name;
     //aqui guardo la posicion que tiene la serie
-    const showIndex = shows.indexOf(showsItem);
     //aqui guardo el id que tiene la serie para más adelante saber si tengo ese
+    const showId = showsItem.show.id;
 
     let showImage = "";
 
@@ -39,18 +39,17 @@ function paintShows() {
     }
 
     let favClassname = "";
-    if (getFavIndex(showsItem.show.id) !== -1) {
+    if (getFavIndex(showId) !== -1) {
       favClassname = "search-result__button--favorite";
     }
 
     htmlCode += `
     <li class="search-result__item ">
-        <button class="search-result__button ${favClassname} js-search-result__button" data-index="${showIndex}">
+        <button class="search-result__button ${favClassname} js-search-result__button" data-id=${showId}>
           <img class="search-result__image" src="${showImage}"/>
           <h3 class="search-result__title">${showName}</h3>
         </button>
       </li>`;
-
   }
 
   searchResult.innerHTML = htmlCode;
@@ -70,11 +69,11 @@ function paintShows() {
 
 //handle: selecciono dentro de las series la favorita
 function selectFavoriteShows(event) {
-  //meto aqui el index que seleciono y se lo meto al array shows
-  //y lo guardo en una constante que es un objeto, y este es el que
-  //voy a pushear y lo que voy a quitar
-  const index = event.currentTarget.dataset.index;
-  const showSelected = shows[index];
+  //hacerlo con id, lo haria con find() para que me devuelva un elemento
+  const selectedId = event.currentTarget.dataset.id;
+  const showSelected = shows.find(
+    shows => shows.show.id === parseInt(selectedId)
+  );
   const showSelectedId = showSelected.show.id;
 
   const indexFavorite = getFavIndex(showSelectedId);
@@ -85,16 +84,20 @@ function selectFavoriteShows(event) {
     showsFavorites.splice(indexFavorite, 1);
   }
   setLocalStorage();
-  paintFavoriteShows();
   paintShows();
+  paintFavoriteShows();
 }
 
 //-----GET FAV INDEX----//
 
+// function getFavIndex(id) {
+//   return showsFavorites.findIndex(function(favorite) {
+//     return favorite.show.id === id;
+//   });
+// }
+
 function getFavIndex(id) {
-  return showsFavorites.findIndex(function (favorite) {
-    return favorite.show.id === id;
-  });
+  return showsFavorites.findIndex(favorite => favorite.show.id === id);
 }
 
 getFavIndex();
@@ -152,8 +155,6 @@ function handleRemoveClick() {
   showsFavorites.splice(index, 1);
   setLocalStorage();
   paintFavoriteShows();
-  paintShows();
-
 }
 
 //-----LOCAL STORAGE----//
@@ -184,15 +185,15 @@ function getServerData(event) {
   event.preventDefault();
   const searchInput = document.querySelector(".search-form__input");
   fetch(`http://api.tvmaze.com/search/shows?q=${searchInput.value}`)
-    .then(function (response) {
+    .then(function(response) {
       return response.json();
     })
-    .then(function (serverData) {
+    .then(function(serverData) {
       //adapto los datos del servidor para usarlos
       shows = serverData;
       paintShows();
     })
-    .catch(function (err) {
+    .catch(function(err) {
       console.log("error", err);
     });
 }
