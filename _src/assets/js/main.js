@@ -15,6 +15,37 @@ let shows = [];
 
 let showsFavorites = [];
 
+
+
+
+// let languages = ['Japanese', 'Pera', 'Turkis'];
+
+// function logLanguage(event) {
+//   event.preventDefault();
+
+
+//   for (const showsItem of shows) {
+//     const index = languages.indexOf(showsItem.show.language);
+
+//     console.log(showsItem.show.name);
+
+//     const isFav = index !== -1;
+
+//     if (isFav) {
+//       console.log('La pelicula es favorita:', showsItem.show.name, ',tiene el idioma :', showsItem.show.language);
+//     }
+
+//   }
+
+// };
+
+// const logButton = document.querySelector('.search-form__button-log');
+// logButton.addEventListener('click', logLanguage);
+
+
+
+
+
 //-----PAINT SHOWS----//
 
 //funcion para pintar series
@@ -185,15 +216,15 @@ function getServerData(event) {
   event.preventDefault();
   const searchInput = document.querySelector(".search-form__input");
   fetch(`http://api.tvmaze.com/search/shows?q=${searchInput.value}`)
-    .then(function(response) {
+    .then(function (response) {
       return response.json();
     })
-    .then(function(serverData) {
+    .then(function (serverData) {
       //adapto los datos del servidor para usarlos
       shows = serverData;
       paintShows();
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.log("error", err);
     });
 }
