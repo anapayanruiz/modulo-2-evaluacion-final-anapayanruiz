@@ -28,6 +28,7 @@ function paintShows() {
     //aqui guardo la posicion que tiene la serie
     const showIndex = shows.indexOf(showsItem);
     //aqui guardo el id que tiene la serie para más adelante saber si tengo ese
+    const showDays = showsItem.show.schedule.days;
 
     let showImage = "";
 
@@ -48,6 +49,7 @@ function paintShows() {
         <button class="search-result__button ${favClassname} js-search-result__button" data-index="${showIndex}">
           <img class="search-result__image" src="${showImage}"/>
           <h3 class="search-result__title">${showName}</h3>
+          <p>${showDays.join(' & ')}</p>
         </button>
       </li>`;
 
@@ -65,6 +67,10 @@ function paintShows() {
     listElement.addEventListener("click", selectFavoriteShows);
   }
 }
+
+
+
+
 
 //-----SELECT FAV----//
 
@@ -123,7 +129,7 @@ function paintFavoriteShows() {
     }
 
     htmlCode += `
-    <li class="search-result__item">
+    <li class="search-result__item" data-index="${showFavIndex}">
         <img class="search-result__image" src="${showFavImage}"/>
         <h3 class="search-result__title">${showFavName}</h3>
         <button class="favorites__button" data-index="${showFavIndex}">Eliminar</button>
@@ -142,6 +148,12 @@ function paintFavoriteShows() {
   for (const listRemoveElement of listRemoveElements) {
     listRemoveElement.addEventListener("click", handleRemoveClick);
   }
+
+  const listElements = document.querySelectorAll(".search-result__item");
+  for (const listElement of listElements) {
+    listElement.addEventListener("click", selectFav);
+  }
+
 }
 
 //-----REMOVE FAV----//
@@ -203,3 +215,16 @@ function getServerData(event) {
 const searchButton = document.querySelector(".search-form__button");
 searchButton.addEventListener("click", getServerData);
 getLocalStorage();
+
+
+
+
+//funcion examen
+
+
+function selectFav(event) {
+  const index = event.currentTarget.dataset.index;
+  const showFavSelected = showsFavorites[index];
+  console.log(showFavSelected.show.name);
+
+}
